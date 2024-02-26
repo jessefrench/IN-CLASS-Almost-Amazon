@@ -1,4 +1,3 @@
-// for merged promises
 import {
   getSingleBook,
   deleteBook,
