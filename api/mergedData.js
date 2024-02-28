@@ -1,14 +1,14 @@
 import {
   getSingleBook,
   deleteBook,
-  // getBooks
+  getBooks
 } from './bookData';
 
 import {
   getSingleAuthor,
   getAuthorBooks,
   deleteSingleAuthor,
-  // getAuthors
+  getAuthors
 } from './authorData';
 
 // TODO: Get data for viewBook
@@ -25,6 +25,7 @@ const getAuthorDetails = async (firebaseKey) => {
   return { author: authorObject, books: authorBooks };
 };
 
+// TODO: Delete author's books when author is deleted
 const deleteAuthorAndAuthorBooks = async (authorFirebaseKey) => {
   const authorBooks = await getAuthorBooks(authorFirebaseKey);
   const deleteBookPromises = await authorBooks.map((authorBookObject) => deleteBook(authorBookObject.firebaseKey));
@@ -33,25 +34,28 @@ const deleteAuthorAndAuthorBooks = async (authorFirebaseKey) => {
 };
 
 // TODO: STRETCH...SEARCH STORE
-// const searchStore = async (searchValue) => {
-//   const allBooks = await getBooks();
-//   const allAuthors = await getAuthors();
-//   const filteredBooks = await allBooks.filter((book) => (
-//     book.title.toLowerCase().includes(searchValue)
-//     || book.description.toLowerCase().includes(searchValue)
-//     || book.price.incluses(parseInt(searchValue, 10))
-//   ));
+const searchStore = async (searchValue, uid) => {
+  const allBooks = await getBooks(uid);
+  const allAuthors = await getAuthors(uid);
 
-//   const filteredAuthors = await allAuthors.filter((author) => {
-//     author.first_name.toLowerCase().includes(searchValue);
-//   });
+  const filteredBooks = await allBooks.filter((book) => (
+    book.title.toLowerCase().includes(searchValue)
+    || book.description.toLowerCase().includes(searchValue)
+    || book.price.includes(parseInt(searchValue, 10))
+  ));
 
-//   return { authors: filteredAuthors, books: filteredBooks };
-// };
+  const filteredAuthors = await allAuthors.filter((author) => (
+    author.first_name.toLowerCase().includes(searchValue)
+    || author.last_name.toLowerCase().includes(searchValue)
+    || author.email.toLowerCase().includes(searchValue)
+  ));
+
+  return { authors: filteredAuthors, books: filteredBooks };
+};
 
 export {
   getBookDetails,
   getAuthorDetails,
   deleteAuthorAndAuthorBooks,
-  // searchStore
+  searchStore
 };
